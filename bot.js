@@ -40,7 +40,7 @@ client.on('message', message => {
                         listOfCommands += '> \n';
                         listOfCommands += '> To see other commands, do `help <page number>`.';
                         message.channel.send(listOfCommands);
-                    } else if ((messageWords.length === 1) || (messageWords[1] === '1')) {
+                    } else if (messageWords[1] === '2') {
                         var listOfCommands = '';
                         listOfCommands += '> ***Page 2/2 of Commands:***\n';
                         listOfCommands += '> \n';
@@ -51,6 +51,7 @@ client.on('message', message => {
                         listOfCommands += '> `buy <item>` buy an item\n';
                         listOfCommands += '> \n';
                         listOfCommands += '> To see other commands, do `help <page number>`.';
+                        message.channel.send(listOfCommands);
                     }
                     break;
                 case 'establish':
@@ -239,4 +240,4 @@ client.on('message', message => {
     }
 });
 
-client.login('NzI5NTY1NDQyOTUxMjE3MTkz.XwKzIA.YtSvRj0RUCA-c6QOyPN9nK6G_kU');
+client.login('NzI5NTY1NDQyOTUxMjE3MTkz.XwPsww.PfT8NgnZtZplofSs1Wvd8F1M6m0');
