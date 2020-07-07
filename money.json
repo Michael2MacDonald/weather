@@ -1,0 +1,37 @@
+{
+    "currencyBoards": [],
+    "stockBoards": [],
+    "countries": [
+        {
+            "guildID": "720201330806882395",
+            "moneyInCirculation": 10000,
+            "currencyAcronym": "NGA",
+            "netWorthNGA": 5000
+        },
+        {
+            "guildID": "729588685779107850",
+            "moneyInCirculation": 1700,
+            "currencyAcronym": "CKC",
+            "netWorthNGA": 5000
+        }
+    ],
+    "bankAccounts": [
+        {
+            "accountID": "295157496853692416",
+            "balance": [
+                [
+                    "NGA",
+                    991.7058823529412
+                ],
+                [
+                    "CKC",
+                    0.9399999999999995
+                ]
+            ]
+        },
+        {
+            "accountID": "640024165532958731",
+            "balance": 0
+        }
+    ]
+}
