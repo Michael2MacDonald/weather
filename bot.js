@@ -230,6 +230,21 @@ client.on('message', message => {
                         }
                     }
                     break;
+                case 'store':
+                    var moneyRaw = fs.readFileSync('money.json');
+                    var moneyData = JSON.parse(moneyRaw);
+                    
+                    var thisCountryCirc = 0;
+                    for (i = 0; i < moneyData.countries.length; i++) {
+                        if (moneyData.countries[i].guildID === message.guild.id) {
+                            thisCountryCirc = moneyData.countries[i].moneyInCirculation;
+                        }
+                    }
+
+                    var hitmanPrice = 
+
+                    message.channel.send('`invest` coming soon!');
+                    break;
                 case 'invest':
                     message.channel.send('`invest` coming soon!');
                     break;
