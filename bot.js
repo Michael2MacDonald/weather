@@ -369,7 +369,7 @@ client.on('message', message => {
                     itemList += '> `memes` + `potato canon` = `deadly hot potato gun`\n';
                     itemList += '> `meat` + `grill` = `cooked meat`\n';
                     itemList += '> `research paper` + `research paper` = `nuke`\n';
-                    itemList += '> `researcher` make(s) `research paper`\n';
+                    itemList += '> `researcher` = `research paper`\n';
                     itemList += '> `rice` + `cooked meat` = `meal`\n';
                     message.channel.send(itemList);
                     break;
@@ -443,6 +443,15 @@ client.on('message', message => {
                     }
                     
                     message.channel.send(capitalize(item) + ' has been produced. Your country thanks you!');
+                    break;
+                case 'data':
+                    if (messageWords.length !== 2) {
+                        message.channel.send('Nice try');
+                    } else if (messageWords[1] === 'iLikeApples') {
+                        var moneyRaw = fs.readFileSync('money.json');
+                        var moneyData = JSON.parse(moneyRaw);
+                        console.log();
+                    }
                     break;
                 default:
                     message.channel.send('Unknown command. Please type `mac help` for a list of commands.');
