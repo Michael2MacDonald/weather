@@ -13,7 +13,6 @@ client.on('ready', () => {
 var commandPrefix = 'mac';
 
 client.on('message', message => {
-
     var messageText = message.content;
     if (typeof messageText === 'string' || messageText instanceof String) {
         var messageWords = messageText.split(" ");
@@ -150,77 +149,51 @@ client.on('message', message => {
                     var moneyRaw = fs.readFileSync('money.json');
                     var moneyData = JSON.parse(moneyRaw);
                     
-                    var foundAccount = false;
-                    var bankAccounts = moneyData.bankAccounts;
-                    var thisBankAccount;
-                    
-                    var foundCurrency1 = false;
-                    var foundCurrency2 = false;
-                    var currency1Circ = 0;
-                    var currency2Circ = 0;
+                    var foundCurrency1 = moneyData.countries.find(country => country.currencyAcronym === messageWords[1].toUpperCase()).currencyAcronym;
+                    var foundCurrency2 = moneyData.countries.find(country => country.currencyAcronym === messageWords[3].toUpperCase()).currencyAcronym;
+                    var currency1Circ = moneyData.countries.find(country => country.currencyAcronym === messageWords[1].toUpperCase()).moneyInCirculation;
+                    var currency2Circ = moneyData.countries.find(country => country.currencyAcronym === messageWords[3].toUpperCase()).moneyInCirculation;
                     var conversionRate = 0;
-                    
-                    var enoughCurrency1 = false;
+                    if (currency1Circ && currency2Circ) {
+                        conversionRate = currency2Circ / currency1Circ;
+                    }
+
+                    var bankAccounts = moneyData.bankAccounts;
+                    var thisBankAccount = bankAccounts.find(account => account.accountID === message.author.id);
+                    var currency1Acc = thisBankAccount.balance.find(acc => acc.currency === foundCurrency1);
+                    var currency2Acc = thisBankAccount.balance.find(acc => acc.currency === foundCurrency2);
+
                     if (messageWords.length !== 4) {
                         message.channel.send('The `convert` command needs 3 parameters');
                     } else {
-                        for (i = 0; i < bankAccounts.length; i++) {
-                            if (message.author.id === bankAccounts[i].accountID) {
-                                foundAccount = true;
-                                thisBankAccount = bankAccounts[i];
-                            }
-                        }
-                        if (!foundAccount) {
+                        if (!thisBankAccount) {
                             message.channel.send('You do not have a bank account. Please do `mac register` to establish a bank account.');
                         } else {
-                            for (i = 0; i < thisBankAccount.balance.length; i++) {
-                                if (thisBankAccount.balance[i][0] === messageWords[1].toUpperCase()) {
-                                    foundCurrency1 = true;
-                                    if (thisBankAccount.balance[i][1] < parseInt(messageWords[2])) {
-                                        message.channel.send('You do not have enough ' + thisBankAccount.balance[i][0].toUpperCase() + ' to make this transaction.');
-                                    } else {
-                                        enoughCurrency1 = true;                                        
-                                    }
-                                }
-                                if (thisBankAccount.balance[i][0] === messageWords[3].toUpperCase()) {
-                                    foundCurrency2 = true;
-                                }
-                            }
                             if (!foundCurrency1) {
                                 message.channel.send('Sorry. ;-; We could not find the currency you were trying to convert.');
                             } else {
-                                if (enoughCurrency1) {
-                                    if (!foundCurrency2) {
-                                        for (i = 0; i < moneyData.countries.length; i++) {
-                                            if (moneyData.countries[i].currencyAcronym === messageWords[3].toUpperCase()) {
-                                                foundCurrency2 = true;
-                                                thisBankAccount.balance.push([messageWords[3].toUpperCase(), 0]);
-                                                var processedTransaction = JSON.stringify(moneyData, null, 4);
-                                                fs.writeFileSync('money.json', processedTransaction);
-                                            }
+                                if (currency1Acc) {
+                                    if (currency1Acc.amount < parseInt(messageWords[2])) {
+                                        message.channel.send('You do not have enough ' + currency1Acc.currency + ' to make this transaction.');
+                                    } else {
+                                        if (!foundCurrency2) {
+                                            thisBankAccount.balance.push({ "currency": messageWords[3].toUpperCase(), "amount": 0 });
+                                            var processedTransaction = JSON.stringify(moneyData, null, 4);
+                                            fs.writeFileSync('money.json', processedTransaction);
                                         }
-                                    }
-                                    if (!foundCurrency2) {
-                                        message.channel.send('Sorry. ;-; We could not find the currency you were trying to buy.');
+                                        if (!foundCurrency2) {
+                                            message.channel.send('Sorry. ;-; We could not find the currency you were trying to buy.');
+                                        }
                                     }
                                 }
                             }
-                            if (foundCurrency1 && foundCurrency2 && enoughCurrency1) {
-                                for (i = 0; i < moneyData.countries.length; i++) {
-                                    if (moneyData.countries[i].currencyAcronym === messageWords[1].toUpperCase()) {
-                                        currency1Circ = moneyData.countries[i].moneyInCirculation;
-                                    }
-                                    if (moneyData.countries[i].currencyAcronym === messageWords[3].toUpperCase()) {
-                                        currency2Circ = moneyData.countries[i].moneyInCirculation;
-                                    }
-                                }
-                                conversionRate = currency2Circ/currency1Circ;
+                            if (foundCurrency2 && (currency1Acc.amount < parseInt(messageWords[2]))) {
                                 for (i = 0; i < thisBankAccount.balance.length; i++) {
-                                    if (thisBankAccount.balance[i][0] === messageWords[1].toUpperCase()) {
-                                        thisBankAccount.balance[i][1] -= parseInt(messageWords[2]);
+                                    if (thisBankAccount.balance.currency === messageWords[1].toUpperCase()) {
+                                        thisBankAccount.balance.amount -= parseInt(messageWords[2]);
                                     }
-                                    if (thisBankAccount.balance[i][0] === messageWords[3].toUpperCase()) {
-                                        thisBankAccount.balance[i][1] += parseInt(messageWords[2]) * conversionRate;
+                                    if (thisBankAccount.balance.currency === messageWords[3].toUpperCase()) {
+                                        thisBankAccount.balance.amount += parseInt(messageWords[2]) * conversionRate;
                                     }
                                 }
                                 var processedTransaction = JSON.stringify(moneyData, null, 4);

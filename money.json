@@ -19,19 +19,20 @@
         {
             "accountID": "295157496853692416",
             "balance": [
-                [
-                    "NGA",
-                    991.7058823529412
-                ],
-                [
-                    "CKC",
-                    0.9399999999999995
-                ]
+                {
+                    "currency": "NGA",
+                    "amount": 1000
+                }
             ]
         },
         {
             "accountID": "640024165532958731",
-            "balance": 0
+            "balance": [
+                {
+                    "currency": "NGA",
+                    "amount": 1000
+                }
+            ]
         }
     ]
 }
