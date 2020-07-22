@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const config = require('./config.json');
 
 var mysql = require('mysql');
 var con = mysql.createConnection({
-  host: "",
-  user: "",
-  password: "",
-  database: ""
+  host: config.host,
+  user: config.user,
+  password: config.password,
+  database: config.database
 });
 
 client.on('ready', () => {
@@ -67,7 +68,7 @@ function pingCommand(arguments, receivedMessage) {
 
 function getDataCommand(arguments, receivedMessage) {
   if (arguments.length < 1) {
-    receivedMessage.channel.send("Please put some arguments");  
+    receivedMessage.channel.send("Please put some arguments");
   } else {
     con.connect();
 
@@ -87,7 +88,7 @@ function getDataCommand(arguments, receivedMessage) {
         for (i = 0; i < arguments.length; i++) {
           argsToLowerCase.push(arguments[i].toLowerCase());
         }
-        
+
         var specificPlace = results.find(place => place.board_name.toLowerCase().startsWith(argsToLowerCase[0])); // checks for the searched location
 
         if (specificPlace) { // checks if searched location has been found
@@ -113,6 +114,4 @@ function getDataCommand(arguments, receivedMessage) {
   }
 }
 
-bot_secret_token = "your_token_here";
-
-client.login(bot_secret_token);
+client.login(config.token)
